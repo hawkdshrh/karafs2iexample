@@ -1,0 +1,16 @@
+FROM optiplex:5000/fuse7/fuse-karaf-openshift:1.6
+
+ARG tmp_extract=/tmp/361cf0e7-b6a4-4a32-a0b1-09ffb18fa248
+
+EXPOSE 8181 8778
+
+COPY maven $tmp_extract/deployments//
+
+USER root
+RUN chown -R jboss:jboss $tmp_extract && cp -rp $tmp_extract/* / && rm -rf $tmp_extract
+RUN chmod -R o+wr /deployments && \
+	chmod -R g+wr /deployments && \
+	chmod +x /deployments
+    
+USER jboss
+CMD /deployments/deploy-and-run.sh
